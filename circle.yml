@@ -1,0 +1,7 @@
+machine:
+  services:
+    - docker
+
+test:
+  pre:
+    - git clone git@github.com:unifio/ci-scripts.git

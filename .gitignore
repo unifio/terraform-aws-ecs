@@ -1,0 +1,6 @@
+**/.terraform
+**/.terraform.d
+**/.terraform/*
+**/*.tfstate.backup
+**/*.tfstate
+**/*.box
