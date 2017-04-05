@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "role" {
 }
 
 resource "aws_iam_role" "role" {
-  assume_role_policy = "${data.aws_iam_policy_document.assume_role.json}"
+  assume_role_policy = "${data.aws_iam_policy_document.role.json}"
   name_prefix        = "${var.cluster_name}-${var.stack_item_label}-${data.aws_region.current.name}-"
   path               = "${var.iam_path}"
 }
@@ -41,7 +41,7 @@ data "aws_iam_policy_document" "monitoring" {
 resource "aws_iam_role_policy" "monitoring" {
   name   = "monitoring"
   policy = "${data.aws_iam_policy_document.monitoring.json}"
-  role   = "${aws_iam_role.role_ecs_agent.id}"
+  role   = "${aws_iam_role.role.id}"
 }
 
 ### Creates resource tagging policy
@@ -56,7 +56,7 @@ data "aws_iam_policy_document" "tagging" {
 resource "aws_iam_role_policy" "tagging" {
   name   = "tagging"
   policy = "${data.aws_iam_policy_document.tagging.json}"
-  role   = "${aws_iam_role.role_ecs_agent.id}"
+  role   = "${aws_iam_role.role.id}"
 }
 
 ### Creates Elastic Container Service (ECS) service policy
@@ -81,11 +81,13 @@ data "aws_iam_policy_document" "ecs" {
 resource "aws_iam_role_policy" "ecs" {
   name   = "ecs"
   policy = "${data.aws_iam_policy_document.ecs.json}"
-  role   = "${aws_iam_role.role_ecs_agent.id}"
+  role   = "${aws_iam_role.role.id}"
 }
 
 ### Creates Simple Storage Service (S3) policy for logging buckets
 data "aws_iam_policy_document" "logging" {
+  count = "${var.logs_bucket_enabled == "true" ? "1" : "0"}"
+
   statement {
     actions   = ["s3:ListBucket"]
     effect    = "Allow"
@@ -104,7 +106,9 @@ data "aws_iam_policy_document" "logging" {
 }
 
 resource "aws_iam_role_policy" "logging" {
+  count = "${var.logs_bucket_enabled == "true" ? "1" : "0"}"
+
   name   = "logging"
   policy = "${data.aws_iam_policy_document.logging.json}"
-  role   = "${aws_iam_role.role_ecs_agent.id}"
+  role   = "${aws_iam_role.role.id}"
 }
