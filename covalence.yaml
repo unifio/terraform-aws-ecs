@@ -7,10 +7,10 @@
 :merge_behavior: 'deeper'
 
 :hierarchy:
-  - "envs/%{environment}"
+  - "stacks/common"
   - "stacks/%{stack}"
-  - "globals"
-  - "envs"
+  - 'globals'
+  - 'environments'
 
 :yaml:
   :datadir: data

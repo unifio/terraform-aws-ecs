@@ -1,6 +1,4 @@
-**/.terraform
-**/.terraform.d
-**/.terraform/*
-**/*.tfstate.backup
-**/*.tfstate
-**/*.box
+*.tfstate*
+.terraform/
+.env
+spec/reports/**
