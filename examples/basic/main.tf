@@ -5,22 +5,22 @@ provider "aws" {
   region = "${var.region}"
 }
 
-## Configures base VPC
-module "vpc_base" {
-  source = "github.com/unifio/terraform-aws-vpc?ref=0.3.0//base"
+## Configures ECS cluster
+module "cluster" {
+  # Example GitHub source
+  #source = "github.com/unifio/terraform-aws-ecs?ref=master//cluster"
+  source = "../../cluster"
 
+  # Resource tags
+  cluster_name        = "${var.cluster_name}"
   stack_item_fullname = "${var.stack_item_fullname}"
   stack_item_label    = "${var.stack_item_label}"
-  vpc_cidr            = "172.16.0.0/24"
-}
 
-## Configures VPC availabilty zones
-module "vpc_az" {
-  source = "github.com/unifio/terraform-aws-vpc?ref=0.3.0//az"
-
-  azs_provisioned     = 2
-  rt_dmz_id           = "${module.vpc_base.rt_dmz_id}"
-  stack_item_fullname = "${var.stack_item_fullname}"
-  stack_item_label    = "${var.stack_item_label}"
-  vpc_id              = "${module.vpc_base.vpc_id}"
+  # Cluster parameters
+  associate_public_ip_address = "true"
+  instance_type               = "${var.instance_type}"
+  max_size                    = "${var.max_size}"
+  min_size                    = "${var.min_size}"
+  subnets                     = ["${split(",",var.subnets)}"]
+  vpc_id                      = "${var.vpc_id}"
 }

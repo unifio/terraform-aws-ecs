@@ -1,0 +1,32 @@
+---
+# Basic defaults example
+
+## Module
+defaults::module: 'examples/basic'
+
+## State storage
+defaults::state:
+  - s3:
+      bucket: "%{hiera('tf_state_bucket')}"
+      name: "terraform-aws-ecs/%{environment}"
+      region: "%{hiera('tf_state_region')}"
+
+## Input variables
+examples::basic::vars:
+  cluster_name: 'example'
+  instance_type: 't2.small'
+  max_size: '3'
+  min_size: '2'
+  region: 'us-east-2'
+  stack_item_fullname: 'Basic Examples'
+  stack_item_label: 'bsc'
+  subnets:
+    type: 's3.state'
+    bucket: "%{hiera('tf_state_bucket')}"
+    document: 'terraform-aws-ecs/prereqs/terraform.tfstate'
+    key: 'dmz_subnet_ids'
+  vpc_id:
+    type: 's3.state'
+    bucket: "%{hiera('tf_state_bucket')}"
+    document: 'terraform-aws-ecs/prereqs/terraform.tfstate'
+    key: 'vpc_id'
