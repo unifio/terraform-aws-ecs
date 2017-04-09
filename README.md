@@ -104,7 +104,7 @@ module "cluster" {
 ### Outputs ###
 
 Name | Type | Description
---- | --- | --- | ---
+--- | --- | ---
 `agent_role_id` | string | ID of the ECS agent IAM role.
 `cluster_id` | string | ID of the ECS cluster.
 `cluster_name` | string | Name of the ECS cluster.
