@@ -1,0 +1,9 @@
+{
+  "editor.renderWhitespace": "all",
+  "files.associations": {
+    "*.tpl": "hcl",
+    "*.tf": "terraform"
+  },
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true
+}

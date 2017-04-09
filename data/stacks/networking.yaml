@@ -1,0 +1,18 @@
+---
+# Prereqs VPC example
+
+## Module
+networking::module: 'examples/prereqs'
+
+## State storage
+networking::state:
+  - s3:
+      bucket: "%{hiera('tf_state_bucket')}"
+      name: "terraform-aws-ecs/%{environment}"
+      region: "%{hiera('tf_state_region')}"
+
+## Input variables
+examples::prereqs::vars:
+  region: 'us-east-2'
+  stack_item_fullname: 'ECS Examples'
+  stack_item_label: 'ecs-exmpl'

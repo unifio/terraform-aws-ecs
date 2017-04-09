@@ -1,0 +1,12 @@
+---
+# Environments
+
+environments:
+  prereqs:
+    - networking
+
+  basic:
+    - defaults
+
+  complete:
+    - overrides

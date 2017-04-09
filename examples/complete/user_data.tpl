@@ -9,7 +9,10 @@ write_files:
     permissions: '0644'
     content: |
       ECS_CLUSTER=${cluster_name}-${stack_item_label}
+      ECS_ENGINE_AUTH_TYPE=dockercfg
 
 runcmd:
+  # Configure ECS
+  - yum install -y aws-cli
   - restart ecs
 output : { all : '| tee -a /var/log/cloud-init-output.log' }

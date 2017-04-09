@@ -1,0 +1,36 @@
+---
+# Complete overrides example
+
+## Module
+overrides::module: 'examples/complete'
+
+## State storage
+overrides::state:
+  - s3:
+      bucket: "%{hiera('tf_state_bucket')}"
+      name: "terraform-aws-ecs/%{environment}"
+      region: "%{hiera('tf_state_region')}"
+
+## Input variables
+examples::complete::vars:
+  ami_override: 'ami-abf2a9ce' # amzn-ami-2016.03.j-amazon-ecs-optimized
+  cluster_name: 'example'
+  enable_monitoring: 'true'
+  iam_path: '/terraform/'
+  instance_based_naming_enabled: 'true'
+  instance_type: 't2.small'
+  max_size: '3'
+  min_size: '2'
+  region: 'us-east-2'
+  stack_item_fullname: 'Complete Examples'
+  stack_item_label: 'cmpl'
+  subnets:
+    type: 's3.state'
+    bucket: "%{hiera('tf_state_bucket')}"
+    document: 'terraform-aws-ecs/prereqs/terraform.tfstate'
+    key: 'dmz_subnet_ids'
+  vpc_id:
+    type: 's3.state'
+    bucket: "%{hiera('tf_state_bucket')}"
+    document: 'terraform-aws-ecs/prereqs/terraform.tfstate'
+    key: 'vpc_id'
