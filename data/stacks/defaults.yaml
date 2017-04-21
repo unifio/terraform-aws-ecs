@@ -13,7 +13,7 @@ defaults::state:
 
 ## Input variables
 examples::basic::vars:
-  cluster_name: 'example'
+  cluster_label: 'exmpl'
   instance_type: 't2.small'
   max_size: '3'
   min_size: '2'

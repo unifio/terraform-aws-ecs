@@ -2,7 +2,7 @@
 
 ## Set Terraform version constraint
 terraform {
-  required_version = "> 0.8.0"
+  required_version = "> 0.9.0"
 }
 
 data "aws_region" "current" {
@@ -14,7 +14,7 @@ data "template_file" "user_data" {
   template = "${var.user_data_override != "" ? "" : file("${path.module}/templates/user_data.tpl")}"
 
   vars {
-    cluster_name     = "${var.cluster_name}"
+    cluster_label    = "${var.cluster_label}"
     stack_item_label = "${var.stack_item_label}"
   }
 }
@@ -54,7 +54,7 @@ module "cluster" {
 
   # Resource tags
   stack_item_fullname = "${var.stack_item_fullname}"
-  stack_item_label    = "${var.cluster_name}-${var.stack_item_label}"
+  stack_item_label    = "${var.cluster_label}-${var.stack_item_label}"
 
   # VPC parameters
   subnets = ["${var.subnets}"]
@@ -74,7 +74,7 @@ module "cluster" {
   enable_monitoring             = "${var.enable_monitoring}"
   instance_based_naming_enabled = "${var.instance_based_naming_enabled}"
   instance_name_prefix          = "${var.instance_name_prefix}"
-  instance_profile              = "${aws_iam_instance_profile.profile.id}"
+  instance_profile              = "${aws_iam_instance_profile.agent_profile.id}"
   instance_tags                 = "${var.instance_tags}"
   instance_type                 = "${var.instance_type}"
   key_name                      = "${var.key_name}"
@@ -104,7 +104,7 @@ module "cluster" {
 }
 
 ## Updates security groups
-resource "aws_security_group_rule" "sg_agent_egress" {
+resource "aws_security_group_rule" "agent_egress" {
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 0
   protocol          = -1
@@ -115,5 +115,5 @@ resource "aws_security_group_rule" "sg_agent_egress" {
 
 ## Registers ECS cluster
 resource "aws_ecs_cluster" "cluster" {
-  name = "${var.cluster_name}-${var.stack_item_label}"
+  name = "${var.cluster_label}-${var.stack_item_label}"
 }

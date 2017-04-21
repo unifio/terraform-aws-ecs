@@ -8,7 +8,7 @@ write_files:
   - path: /etc/ecs/ecs.config
     permissions: '0644'
     content: |
-      ECS_CLUSTER=${cluster_name}-${stack_item_label}
+      ECS_CLUSTER=${cluster_label}-${stack_item_label}
       ECS_ENGINE_AUTH_TYPE=dockercfg
 
 runcmd:

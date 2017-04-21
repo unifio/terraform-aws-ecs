@@ -1,9 +1,9 @@
 # Input variables
 
 ## Resource tags
-variable "cluster_name" {
+variable "cluster_label" {
   type        = "string"
-  description = "Name of the ECS based application stack"
+  description = "Short form identifier for this cluster."
 }
 
 variable "stack_item_fullname" {

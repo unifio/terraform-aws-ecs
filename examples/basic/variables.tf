@@ -1,7 +1,7 @@
 # Input variables
 
 ## Resource tags
-variable "cluster_name" {
+variable "cluster_label" {
   type = "string"
 }
 

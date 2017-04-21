@@ -1,7 +1,7 @@
 # Outputs
 
 output "agent_role_id" {
-  value = "${aws_iam_role.role.id}"
+  value = "${aws_iam_role.agent_role.id}"
 }
 
 output "cluster_id" {
