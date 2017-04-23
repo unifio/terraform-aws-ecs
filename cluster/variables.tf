@@ -278,3 +278,130 @@ variable "wait_for_capacity_timeout" {
   description = "A maximum duration that Terraform should wait for ASG managed instances to become healthy before timing out."
   default     = ""
 }
+
+## Service discovery parameters
+variable "agent_config_override" {
+  type        = "string"
+  description = "Consul agent ECS task configuration JSON."
+  default     = ""
+}
+
+variable "agent_task_arn_override" {
+  type        = "string"
+  description = "Consul agent ECS task ARN."
+  default     = ""
+}
+
+variable "consul_dc" {
+  type        = "string"
+  description = "Consul datacenter of the specified cluster."
+  default     = "dc1"
+}
+
+variable "consul_docker_image" {
+  type        = "string"
+  description = "Consul Docker image and tag"
+  default     = "consul:0.8.1"
+}
+
+variable "consul_gossip_cidrs" {
+  type        = "list"
+  description = "CIDRs encompassing all nodes wihin the Consul datacenter."
+  default     = ["0.0.0.0/0"]
+}
+
+variable "lb_arn" {
+  type        = "string"
+  description = "Load balancer ARN."
+  default     = ""
+}
+
+variable "lb_listener_arn" {
+  type        = "string"
+  description = "The ARN of the listener to which to attach rules."
+  default     = ""
+}
+
+variable "lb_listener_rule_priority" {
+  type        = "string"
+  description = "The priority for the rule."
+  default     = "100"
+}
+
+variable "lb_listener_certificate_arn" {
+  type        = "string"
+  description = "The ARN of the SSL server certificate."
+  default     = ""
+}
+
+variable "lb_listener_port" {
+  type        = "string"
+  description = "The port on which the load balancer is listening."
+  default     = "80"
+}
+
+variable "lb_listener_protocol" {
+  type        = "string"
+  description = "The protocol for connections from clients to the load balancer. Valid values are HTTP and HTTPS."
+  default     = "HTTP"
+}
+
+variable "lb_listener_ssl_policy" {
+  type        = "string"
+  description = "The name of the SSL Policy for the listener."
+  default     = "ELBSecurityPolicy-2016-08"
+}
+
+variable "lb_sg_id" {
+  type        = "string"
+  description = "Consul service endpoint security group ID."
+  default     = ""
+}
+
+variable "registrator_config_override" {
+  type        = "string"
+  description = "Registrator ECS task configuration JSON."
+  default     = ""
+}
+
+variable "registrator_docker_image" {
+  type        = "string"
+  description = "Registrator Docker image and tag"
+  default     = "gliderlabs/registrator:v7"
+}
+
+variable "registrator_task_arn_override" {
+  type        = "string"
+  description = "Registrator ECS task ARN."
+  default     = ""
+}
+
+variable "server_config_override" {
+  type        = "string"
+  description = "Consul server ECS task configuration JSON."
+  default     = ""
+}
+
+variable "server_task_arn_override" {
+  type        = "string"
+  description = "Consul server ECS task ARN."
+  default     = ""
+}
+
+variable "server_desired_count" {
+  type        = "string"
+  description = "The number of Consul server containers to run."
+  default     = "3"
+}
+
+variable "service_discovery_enabled" {
+  type        = "string"
+  description = "Flag for the deployment of Consul service discovery and configuration."
+  default     = "false"
+}
+
+variable "service_registration_enabled" {
+  type        = "string"
+  description = "Flag for the deployment of Registrator service registration."
+  default     = "false"
+}

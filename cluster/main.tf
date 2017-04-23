@@ -117,3 +117,42 @@ resource "aws_security_group_rule" "agent_egress" {
 resource "aws_ecs_cluster" "cluster" {
   name = "${var.cluster_label}-${var.stack_item_label}"
 }
+
+## Enables Consul service discovery
+module "consul" {
+  source = "../consul"
+
+  # Resource tags
+  stack_item_fullname = "${var.stack_item_fullname}"
+  stack_item_label    = "${var.cluster_label}-${var.stack_item_label}"
+
+  # ECS parameters
+  cluster_id    = "${aws_ecs_cluster.cluster.id}"
+  cluster_name  = "${aws_ecs_cluster.cluster.name}"
+  cluster_sg_id = "${module.cluster.sg_id}"
+  iam_path      = "${var.iam_path}"
+  vpc_id        = "${var.vpc_id}"
+
+  # Service discovery parameters
+  ## TODO: Enable for auto scaling
+
+  agent_config_override         = "${var.agent_config_override}"
+  agent_desired_count           = "${((length(var.desired_capacity) > 0 ? var.desired_capacity : var.min_size) - var.server_desired_count) >= 0 ? (var.min_size - var.server_desired_count) : "0"}"
+  agent_task_arn_override       = "${var.agent_task_arn_override}"
+  consul_dc                     = "${var.consul_dc}"
+  consul_docker_image           = "${var.consul_docker_image}"
+  consul_gossip_cidrs           = ["${var.consul_gossip_cidrs}"]
+  lb_arn                        = "${var.lb_arn}"
+  lb_listener_arn               = "${var.lb_listener_arn}"
+  lb_listener_rule_priority     = "${var.lb_listener_rule_priority}"
+  lb_sg_id                      = "${var.lb_sg_id}"
+  registrator_config_override   = "${var.registrator_config_override}"
+  registrator_desired_count     = "${length(var.desired_capacity) > 0 ? var.desired_capacity : var.min_size}"
+  registrator_docker_image      = "${var.registrator_docker_image}"
+  registrator_task_arn_override = "${var.registrator_task_arn_override}"
+  server_config_override        = "${var.server_config_override}"
+  server_desired_count          = "${var.server_desired_count}"
+  server_task_arn_override      = "${var.server_task_arn_override}"
+  service_discovery_enabled     = "${(var.min_size - var.server_desired_count) < 0 ? "false" : var.service_discovery_enabled}"
+  service_registration_enabled  = "${var.service_registration_enabled}"
+}
