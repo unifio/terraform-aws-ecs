@@ -53,3 +53,14 @@ variable "subnets" {
 variable "vpc_id" {
   type = "string"
 }
+
+## Service discovery parameters
+variable "service_discovery_enabled" {
+  type    = "string"
+  default = "false"
+}
+
+variable "service_registration_enabled" {
+  type    = "string"
+  default = "false"
+}

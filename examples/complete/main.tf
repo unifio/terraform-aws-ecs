@@ -51,4 +51,86 @@ module "cluster" {
   subnets             = ["${split(",",var.subnets)}"]
   user_data_override  = "${data.template_file.init.rendered}"
   vpc_id              = "${var.vpc_id}"
+
+  # Service discovery parameters
+  lb_arn                       = "${aws_alb.lb.arn}"
+  lb_listener_arn              = "${aws_alb_listener.admin.arn}"
+  lb_sg_id                     = "${aws_security_group.lb.id}"
+  service_discovery_enabled    = "${var.service_discovery_enabled}"
+  service_registration_enabled = "${var.service_registration_enabled}"
+}
+
+# Configures ALB for internal dashboards
+
+## Creates elastic load balancer security group
+resource "aws_security_group" "lb" {
+  name_prefix = "${var.stack_item_label}-lb-"
+  description = "${var.stack_item_fullname} load balancer security group"
+  vpc_id      = "${var.vpc_id}"
+
+  tags {
+    application = "${var.stack_item_fullname}"
+    managed_by  = "terraform"
+    Name        = "${var.stack_item_label}-lb"
+  }
+}
+
+### Creates ELB security group rules
+resource "aws_security_group_rule" "lb_egress" {
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 0
+  protocol          = -1
+  security_group_id = "${aws_security_group.lb.id}"
+  to_port           = 0
+  type              = "egress"
+}
+
+resource "aws_security_group_rule" "lb_http" {
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 80
+  protocol          = "tcp"
+  security_group_id = "${aws_security_group.lb.id}"
+  to_port           = 80
+  type              = "ingress"
+}
+
+resource "aws_alb" "lb" {
+  name            = "${var.cluster_label}-${var.stack_item_label}"
+  security_groups = ["${aws_security_group.lb.id}"]
+  subnets         = ["${split(",",var.subnets)}"]
+
+  tags {
+    application = "${var.stack_item_fullname}"
+    managed_by  = "terraform"
+    Name        = "${var.stack_item_label}"
+  }
+}
+
+resource "aws_alb_target_group" "default" {
+  name     = "default-${var.stack_item_label}"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = "${var.vpc_id}"
+
+  health_check {
+    port     = 80
+    protocol = "HTTP"
+  }
+
+  tags {
+    application = "${var.stack_item_fullname}"
+    Name        = "default-${var.stack_item_label}"
+    managed_by  = "terraform"
+  }
+}
+
+resource "aws_alb_listener" "admin" {
+  load_balancer_arn = "${aws_alb.lb.arn}"
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    target_group_arn = "${aws_alb_target_group.default.arn}"
+    type             = "forward"
+  }
 }

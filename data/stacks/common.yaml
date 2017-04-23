@@ -1,25 +1,17 @@
 ---
-# Basic defaults example
+# Common data
 
-## Module
-defaults::module: 'examples/basic'
-
-## State storage
-defaults::state:
-  - s3:
-      bucket: "%{hiera('tf_state_bucket')}"
-      name: "terraform-aws-ecs/%{environment}"
-      region: "%{hiera('tf_state_region')}"
-
-## Input variables
-examples::basic::vars:
+## Complete examples
+examples::complete::vars:
+  ami_override: 'ami-abf2a9ce' # amzn-ami-2016.03.j-amazon-ecs-optimized
   cluster_label: 'exmpl'
+  enable_monitoring: 'true'
+  iam_path: '/terraform/'
+  instance_based_naming_enabled: 'true'
   instance_type: 't2.nano'
-  max_size: '3'
-  min_size: '2'
   region: 'us-east-2'
-  stack_item_fullname: 'Basic Examples'
-  stack_item_label: 'bsc'
+  stack_item_label: 'cmpl'
+  stack_item_fullname: 'Complete Examples'
   subnets:
     type: 's3.state'
     bucket: "%{hiera('tf_state_bucket')}"
