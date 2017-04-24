@@ -3,6 +3,17 @@
 #### IMPROVEMENTS / NEW FEATURES:
 * Add support for application autoscaling
 
+## 0.3.0 (April 26, 2017)
+
+#### BACKWARDS INCOMPATIBILITIES / NOTES:
+* Versions of Terraform prior to v0.9.0 no longer supported.
+* The following input variables have been changed:
+  * `cluster_name (string, required)` -> `cluster_label (string, required)`
+
+#### IMPROVEMENTS / NEW FEATURES:
+* Support for dpeloyment of Consul service discovery & configuration.
+* Support for deployment of Registrator for service registration with Consul.
+
 ## 0.2.0 (April 9, 2017)
 
 #### BACKWARDS INCOMPATIBILITIES / NOTES:
