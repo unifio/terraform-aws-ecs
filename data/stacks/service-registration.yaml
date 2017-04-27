@@ -1,0 +1,19 @@
+---
+# Complete service registration example
+
+## Module
+service-registration::module: 'examples/complete'
+
+## State storage
+service-registration::state:
+  - s3:
+      bucket: "%{hiera('tf_state_bucket')}"
+      name: "terraform-aws-ecs/%{environment}"
+      region: "%{hiera('tf_state_region')}"
+
+## Input variables
+examples::complete::vars:
+  max_size: '3'
+  min_size: '3'
+  service_discovery_enabled: 'true'
+  service_registration_enabled: 'true'

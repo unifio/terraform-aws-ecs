@@ -14,7 +14,7 @@ overrides::state:
 ## Input variables
 examples::complete::vars:
   ami_override: 'ami-abf2a9ce' # amzn-ami-2016.03.j-amazon-ecs-optimized
-  cluster_name: 'example'
+  cluster_label: 'exmpl'
   enable_monitoring: 'true'
   iam_path: '/terraform/'
   instance_based_naming_enabled: 'true'

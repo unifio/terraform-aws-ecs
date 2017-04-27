@@ -12,10 +12,15 @@ test:
     # UAT
     ## Test defaults
     - bin/covalence basic:defaults:apply
-    - bin/covalence basic:destroy
     ## Test overrides
     - bin/covalence complete:overrides:apply
-    - bin/covalence complete:destroy
+    ## Test service discovery
+    - bin/covalence complete:service-discovery:apply
+    - bin/covalence complete:service-registration:apply
+    - bin/covalence complete:consul-agent:apply
+    ## Clean up
+    - bin/covalence basic:destroy
+    - bin/covalence complete:consul-agent:destroy
   post:
     # Destroy VPC
     - bin/covalence prereqs:destroy

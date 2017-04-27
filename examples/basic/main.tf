@@ -12,7 +12,7 @@ module "cluster" {
   source = "../../cluster"
 
   # Resource tags
-  cluster_name        = "${var.cluster_name}"
+  cluster_label       = "${var.cluster_label}"
   stack_item_fullname = "${var.stack_item_fullname}"
   stack_item_label    = "${var.stack_item_label}"
 

@@ -10,3 +10,6 @@ environments:
 
   complete:
     - overrides
+    - service-discovery
+    - service-registration
+    - consul-agent
