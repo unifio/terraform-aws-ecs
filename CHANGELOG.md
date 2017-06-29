@@ -1,7 +1,19 @@
 ## Unreleased
 
 #### IMPROVEMENTS / NEW FEATURES:
-* Add support for application autoscaling
+* Add support for application auto scaling
+
+## 0.3.1 (June 29, 2017)
+
+#### BACKWARDS INCOMPATIBILITIES / NOTES:
+* Cluster module no longer accepts a pre-provisioned ALB when service discovery is enabled.
+* Consul ALB listener rule no longer provisioned by this module.
+
+#### IMPROVEMENTS / NEW FEATURES:
+* Upgraded `terraform-aws-asg` module to v0.3.1.
+* Cluster module no longer requires a pre-provisioned ALB when service discovery is enabled. The module now returns a security group ID and target group ARN for association with an ALB at a later time if desired.
+* The cluster module will now accept a list of additional target group ARNs.
+* Consul ECS service role updated to AWS best practices for IAM policy.
 
 ## 0.3.0 (April 26, 2017)
 

@@ -72,6 +72,7 @@ Name | Type | Required | Description
 `placement_group` | string | | The name of the placement group into which you'll launch your instances, if any.
 `protect_from_scale_in` | string | | Allows setting instance protection. The autoscaling group will not select instances with this setting for terminination during scale in events.
 `suspended_processes` | list | Default: [] | A list of processes to suspend for the AutoScaling Group. The allowed values are `Launch`, `Terminate`, `HealthCheck`, `ReplaceUnhealthy`, `AZRebalance`, `AlarmNotification`, `ScheduledActions`, `AddToLoadBalancer`. Note that if you suspend either the `Launch` or `Terminate` process types, it can prevent your autoscaling group from functioning properly.
+`target_group_arns` | list | Default: [] | A list of 'aws_alb_target_group' ARNs, for use with Application Load Balancing.
 `termination_policies` | list | Default: [] | A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are `OldestInstance`, `NewestInstance`, `OldestLaunchConfiguration`, `ClosestToNextInstanceHour`, `Default`.
 `wait_for_capacity_timeout` | string | | A maximum duration that Terraform should wait for ASG managed instances to become healthy before timing out.
 
@@ -82,8 +83,6 @@ Name | Type | Required | Description
 `agent_task_arn_override` | string | | Consul agent ECS task ARN.
 `consul_dc` | string | Default: `dc1` | Consul datacenter of the specified cluster.
 `consul_gossip_cidrs` | list | Default: `0.0.0.0/0` | CIDRs encompassing all nodes wihin the Consul datacenter.
-`lb_arn` | string | yes; if `service_discovery_enabled` is `true` | Load balancer ARN.
-`lb_sg_id` | string | yes; if `service_discovery_enabled` is `true` | Consul service endpoint security group ID.
 `registrator_config_override` | string | | Registrator ECS task configuration JSON.
 `registrator_task_arn_override` | string | | Registrator ECS task ARN.
 `server_config_override` | string | | Consul server ECS task configuration JSON.
@@ -119,8 +118,6 @@ module "cluster" {
   # Service discovery parameters
   service_discovery_enabled = true
   service_registration_enabled = true
-  la_arn = "arn:aws:elasticloadbalancing:us-east-2:XXXXXXXXXXXX:loadbalancer/app/exmpl-cmpl/93f47d7391a68bf0"
-  lb_sg_id = "sg-xxxxxxxx"
 }
 ```
 
@@ -131,6 +128,7 @@ Name | Type | Description
 `agent_role_id` | string | ID of the ECS agent IAM role.
 `cluster_id` | string | ID of the ECS cluster.
 `cluster_name` | string | Name of the ECS cluster.
+`consul_sg_id` | string | ID of the security group associated with the agent instances for enabling Consul HTTP communication.
 `consul_target_group_arn` | string | ARN of the Consul server target group.
 `sg_id` | string | ID of the security group associated with the agent instances.
 

@@ -50,7 +50,7 @@ data "aws_ami" "ecs_ami" {
 }
 
 module "cluster" {
-  source = "github.com/unifio/terraform-aws-asg?ref=v0.3.0//group"
+  source = "github.com/unifio/terraform-aws-asg?ref=v0.3.1//group"
 
   # Resource tags
   stack_item_fullname = "${var.stack_item_fullname}"
@@ -83,7 +83,7 @@ module "cluster" {
   root_vol_iops                 = "${var.root_vol_iops}"
   root_vol_size                 = "${var.root_vol_size}"
   root_vol_type                 = "${var.root_vol_type}"
-  security_groups               = ["${var.security_groups}"]
+  security_groups               = ["${distinct(concat(list(module.consul.sg_id), compact(var.security_groups)))}"]
   spot_price                    = "${var.spot_price}"
   user_data                     = "${coalesce(var.user_data_override,data.template_file.user_data.rendered)}"
 
@@ -99,6 +99,7 @@ module "cluster" {
   placement_group           = "${var.placement_group}"
   protect_from_scale_in     = "${var.protect_from_scale_in}"
   suspended_processes       = ["${var.suspended_processes}"]
+  target_group_arns         = ["${var.target_group_arns}"]
   termination_policies      = ["${var.termination_policies}"]
   wait_for_capacity_timeout = "${var.wait_for_capacity_timeout}"
 }
@@ -142,10 +143,6 @@ module "consul" {
   consul_dc                     = "${var.consul_dc}"
   consul_docker_image           = "${var.consul_docker_image}"
   consul_gossip_cidrs           = ["${var.consul_gossip_cidrs}"]
-  lb_arn                        = "${var.lb_arn}"
-  lb_listener_arn               = "${var.lb_listener_arn}"
-  lb_listener_rule_priority     = "${var.lb_listener_rule_priority}"
-  lb_sg_id                      = "${var.lb_sg_id}"
   registrator_config_override   = "${var.registrator_config_override}"
   registrator_desired_count     = "${length(var.desired_capacity) > 0 ? var.desired_capacity : var.min_size}"
   registrator_docker_image      = "${var.registrator_docker_image}"

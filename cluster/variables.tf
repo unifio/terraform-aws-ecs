@@ -267,6 +267,12 @@ variable "suspended_processes" {
   default     = []
 }
 
+variable "target_group_arns" {
+  type        = "list"
+  description = "A list of 'aws_alb_target_group' ARNs, for use with Application Load Balancing"
+  default     = []
+}
+
 variable "termination_policies" {
   type        = "list"
   description = "A list of policies to decide how the instances in the auto scale group should be terminated. The allowed values are 'OldestInstance', 'NewestInstance', 'OldestLaunchConfiguration', 'ClosestToNextInstanceHour', 'Default'."
@@ -301,61 +307,13 @@ variable "consul_dc" {
 variable "consul_docker_image" {
   type        = "string"
   description = "Consul Docker image and tag"
-  default     = "consul:0.8.1"
+  default     = "consul:latest"
 }
 
 variable "consul_gossip_cidrs" {
   type        = "list"
   description = "CIDRs encompassing all nodes wihin the Consul datacenter."
   default     = ["0.0.0.0/0"]
-}
-
-variable "lb_arn" {
-  type        = "string"
-  description = "Load balancer ARN."
-  default     = ""
-}
-
-variable "lb_listener_arn" {
-  type        = "string"
-  description = "The ARN of the listener to which to attach rules."
-  default     = ""
-}
-
-variable "lb_listener_rule_priority" {
-  type        = "string"
-  description = "The priority for the rule."
-  default     = "100"
-}
-
-variable "lb_listener_certificate_arn" {
-  type        = "string"
-  description = "The ARN of the SSL server certificate."
-  default     = ""
-}
-
-variable "lb_listener_port" {
-  type        = "string"
-  description = "The port on which the load balancer is listening."
-  default     = "80"
-}
-
-variable "lb_listener_protocol" {
-  type        = "string"
-  description = "The protocol for connections from clients to the load balancer. Valid values are HTTP and HTTPS."
-  default     = "HTTP"
-}
-
-variable "lb_listener_ssl_policy" {
-  type        = "string"
-  description = "The name of the SSL Policy for the listener."
-  default     = "ELBSecurityPolicy-2016-08"
-}
-
-variable "lb_sg_id" {
-  type        = "string"
-  description = "Consul service endpoint security group ID."
-  default     = ""
 }
 
 variable "registrator_config_override" {

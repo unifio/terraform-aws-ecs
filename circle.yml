@@ -15,6 +15,7 @@ test:
     ## Test overrides
     - bin/covalence complete:overrides:apply
     ## Test service discovery
+    - bin/covalence complete:service-discovery:apply || true # Two applies required due to LC change
     - bin/covalence complete:service-discovery:apply
     - bin/covalence complete:service-registration:apply
     - bin/covalence complete:consul-agent:apply
@@ -24,3 +25,5 @@ test:
   post:
     # Destroy VPC
     - bin/covalence prereqs:destroy
+    # Post RSpec results
+    - cp -r spec/reports/ $CIRCLE_TEST_REPORTS/rspec

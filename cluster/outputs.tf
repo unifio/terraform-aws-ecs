@@ -12,6 +12,10 @@ output "cluster_name" {
   value = "${aws_ecs_cluster.cluster.name}"
 }
 
+output "consul_sg_id" {
+  value = "${module.consul.sg_id}"
+}
+
 output "consul_target_group_arn" {
   value = "${module.consul.target_group_arn}"
 }
