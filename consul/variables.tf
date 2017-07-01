@@ -59,22 +59,6 @@ variable "consul_gossip_cidrs" {
   type = "list"
 }
 
-variable "lb_arn" {
-  type = "string"
-}
-
-variable "lb_listener_arn" {
-  type = "string"
-}
-
-variable "lb_listener_rule_priority" {
-  type = "string"
-}
-
-variable "lb_sg_id" {
-  type = "string"
-}
-
 variable "registrator_config_override" {
   type = "string"
 }

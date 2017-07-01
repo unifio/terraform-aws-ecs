@@ -67,9 +67,11 @@ resource "aws_iam_role" "ecs_role" {
   path               = "${var.iam_path}"
 }
 
-data "aws_iam_policy_document" "elb_policy" {
+data "aws_iam_policy_document" "lb_policy" {
   statement {
     actions = [
+      "ec2:AuthorizeSecurityGroupIngress",
+      "ec2:Describe*",
       "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
       "elasticloadbalancing:DeregisterTargets",
       "elasticloadbalancing:Describe*",
@@ -82,11 +84,11 @@ data "aws_iam_policy_document" "elb_policy" {
   }
 }
 
-resource "aws_iam_role_policy" "elb_policy" {
+resource "aws_iam_role_policy" "lb_policy" {
   count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
 
-  name   = "elb"
-  policy = "${data.aws_iam_policy_document.elb_policy.json}"
+  name   = "lb"
+  policy = "${data.aws_iam_policy_document.lb_policy.json}"
   role   = "${aws_iam_role.ecs_role.id}"
 }
 

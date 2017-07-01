@@ -67,16 +67,37 @@ resource "aws_security_group_rule" "agent_serf_wan_udp" {
   type              = "ingress"
 }
 
-### Traffic from the load balancer
-resource "aws_security_group_rule" "agent_consul_http_api" {
+### Consul HTTP client security group
+resource "aws_security_group" "consul_sg" {
   count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
 
-  from_port                = 8500
-  protocol                 = "tcp"
-  security_group_id        = "${var.cluster_sg_id}"
-  source_security_group_id = "${var.lb_sg_id}"
-  to_port                  = 8500
-  type                     = "ingress"
+  description = "${var.stack_item_fullname} Consul security group"
+  name_prefix = "consul-${var.stack_item_label}-"
+  vpc_id      = "${var.vpc_id}"
+
+  egress {
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 0
+    protocol    = -1
+    to_port     = 0
+  }
+
+  ingress {
+    from_port = 8500
+    protocol  = "tcp"
+    self      = true
+    to_port   = 8500
+  }
+
+  tags {
+    application = "${var.stack_item_fullname}"
+    managed_by  = "terraform"
+    Name        = "consul-${var.stack_item_label}"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 ## Creates ALB target group
@@ -98,23 +119,6 @@ resource "aws_alb_target_group" "consul_group" {
     application = "${var.stack_item_fullname}"
     Name        = "consul-${var.stack_item_label}"
     managed_by  = "terraform"
-  }
-}
-
-resource "aws_alb_listener_rule" "consul_rule" {
-  count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
-
-  listener_arn = "${var.lb_listener_arn}"
-  priority     = "${var.lb_listener_rule_priority}"
-
-  action {
-    type             = "forward"
-    target_group_arn = "${aws_alb_target_group.consul_group.arn}"
-  }
-
-  condition {
-    field  = "path-pattern"
-    values = ["/*"]
   }
 }
 
@@ -214,7 +218,7 @@ resource "aws_ecs_task_definition" "registrator_task" {
 ### Consul server
 resource "aws_ecs_service" "consul_server" {
   count      = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
-  depends_on = ["aws_iam_role.ecs_role", "aws_alb_listener_rule.consul_rule"]
+  depends_on = ["aws_iam_role.ecs_role"]
 
   cluster                            = "${var.cluster_id}"
   deployment_maximum_percent         = "100"

@@ -31,7 +31,7 @@ variable "region" {
 }
 
 variable "subnets" {
-  type = "string"
+  type = "list"
 }
 
 variable "vpc_id" {

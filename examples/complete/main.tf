@@ -48,14 +48,11 @@ module "cluster" {
   logs_bucket_name    = "${aws_s3_bucket.logs.id}"
   max_size            = "${var.max_size}"
   min_size            = "${var.min_size}"
-  subnets             = ["${split(",",var.subnets)}"]
+  subnets             = ["${var.subnets}"]
   user_data_override  = "${data.template_file.init.rendered}"
   vpc_id              = "${var.vpc_id}"
 
   # Service discovery parameters
-  lb_arn                       = "${aws_alb.lb.arn}"
-  lb_listener_arn              = "${aws_alb_listener.admin.arn}"
-  lb_sg_id                     = "${aws_security_group.lb.id}"
   service_discovery_enabled    = "${var.service_discovery_enabled}"
   service_registration_enabled = "${var.service_registration_enabled}"
 }
@@ -96,8 +93,8 @@ resource "aws_security_group_rule" "lb_http" {
 
 resource "aws_alb" "lb" {
   name            = "${var.cluster_label}-${var.stack_item_label}"
-  security_groups = ["${aws_security_group.lb.id}"]
-  subnets         = ["${split(",",var.subnets)}"]
+  security_groups = ["${aws_security_group.lb.id}", "${module.cluster.consul_sg_id}"]
+  subnets         = ["${var.subnets}"]
 
   tags {
     application = "${var.stack_item_fullname}"
@@ -132,5 +129,22 @@ resource "aws_alb_listener" "admin" {
   default_action {
     target_group_arn = "${aws_alb_target_group.default.arn}"
     type             = "forward"
+  }
+}
+
+resource "aws_alb_listener_rule" "consul_rule" {
+  count = "${var.service_discovery_enabled == "true" ? 1 : 0}"
+
+  listener_arn = "${aws_alb_listener.admin.arn}"
+  priority     = 100
+
+  action {
+    type             = "forward"
+    target_group_arn = "${module.cluster.consul_target_group_arn}"
+  }
+
+  condition {
+    field  = "path-pattern"
+    values = ["/*"]
   }
 }
