@@ -5,7 +5,7 @@ Terraform module for the deployment of an AWS Elastic Container Service (ECS) cl
 
 ## Requirements ##
 
-- Terraform 0.8.0 or newer
+- Terraform 0.11.0 or newer
 - AWS provider
 
 ## Cluster module ##
@@ -82,7 +82,6 @@ Name | Type | Required | Description
 `agent_config_override` | string | | Consul agent ECS task configuration JSON.
 `agent_task_arn_override` | string | | Consul agent ECS task ARN.
 `consul_dc` | string | Default: `dc1` | Consul datacenter of the specified cluster.
-`consul_gossip_cidrs` | list | Default: `0.0.0.0/0` | CIDRs encompassing all nodes wihin the Consul datacenter.
 `registrator_config_override` | string | | Registrator ECS task configuration JSON.
 `registrator_task_arn_override` | string | | Registrator ECS task ARN.
 `server_config_override` | string | | Consul server ECS task configuration JSON.
