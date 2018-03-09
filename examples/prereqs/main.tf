@@ -7,7 +7,7 @@ provider "aws" {
 
 ## Configures base VPC
 module "vpc_base" {
-  source = "github.com/unifio/terraform-aws-vpc?ref=v0.3.2//base"
+  source = "github.com/unifio/terraform-aws-vpc?ref=v0.3.3//base"
 
   enable_dns          = "true"
   stack_item_fullname = "${var.stack_item_fullname}"
@@ -17,7 +17,7 @@ module "vpc_base" {
 
 ## Configures VPC availabilty zones
 module "vpc_az" {
-  source = "github.com/unifio/terraform-aws-vpc?ref=v0.3.2//az"
+  source = "github.com/unifio/terraform-aws-vpc?ref=v0.3.3//az"
 
   azs_provisioned     = 2
   lans_per_az         = 0

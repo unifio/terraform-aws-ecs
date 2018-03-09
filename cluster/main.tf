@@ -2,7 +2,7 @@
 
 ## Set Terraform version constraint
 terraform {
-  required_version = "> 0.9.0"
+  required_version = "> 0.11.0"
 }
 
 data "aws_region" "current" {
@@ -11,7 +11,7 @@ data "aws_region" "current" {
 
 ## Creates cloud-config data for agent cluster
 data "template_file" "user_data" {
-  template = "${var.user_data_override != "" ? "" : file("${path.module}/templates/user_data.tpl")}"
+  template = "${var.user_data_override != "" ? "" : file("${path.module}/templates/user_data.hcl")}"
 
   vars {
     cluster_label    = "${var.cluster_label}"
@@ -142,7 +142,6 @@ module "consul" {
   agent_task_arn_override       = "${var.agent_task_arn_override}"
   consul_dc                     = "${var.consul_dc}"
   consul_docker_image           = "${var.consul_docker_image}"
-  consul_gossip_cidrs           = ["${var.consul_gossip_cidrs}"]
   registrator_config_override   = "${var.registrator_config_override}"
   registrator_desired_count     = "${length(var.desired_capacity) > 0 ? var.desired_capacity : var.min_size}"
   registrator_docker_image      = "${var.registrator_docker_image}"

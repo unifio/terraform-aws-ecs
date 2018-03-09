@@ -1,9 +1,12 @@
 [{
   "name": "consul-agent",
   "image": "${docker_image}",
-  "memory": 16,
-  "cpu": 10,
+  "memory": 128,
+  "cpu": 64,
   "essential": true,
+  "dockerLabels": {
+    "service": "consul"
+  },
   "portMappings": [{
     "hostPort": 8500,
     "containerPort": 8500,

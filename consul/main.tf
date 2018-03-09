@@ -2,92 +2,26 @@
 
 ## Set Terraform version constraint
 terraform {
-  required_version = "> 0.9.0"
+  required_version = "> 0.11.0"
 }
 
-data "aws_region" "current" {
-  current = true
+data "aws_region" "current" {}
+
+locals {
+  service_discovery_check = "${var.service_discovery_enabled == "true" ? 1 : 0}"
+  consul_server_check     = "${var.server_desired_count > 0 ? 1 : 0}"
+  consul_agent_check      = "${var.agent_desired_count > 0 ? 1 : 0}"
+  registrator_check       = "${var.service_registration_enabled == "true" ? 1 : 0}"
 }
 
-## Updates cluster security group
+## Creates Consul communication security group
 
-### Traffic within the environment
-resource "aws_security_group_rule" "agent_consul_rpc" {
-  count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
-
-  cidr_blocks       = ["${var.consul_gossip_cidrs}"]
-  from_port         = 8300
-  protocol          = "tcp"
-  security_group_id = "${var.cluster_sg_id}"
-  to_port           = 8300
-  type              = "ingress"
-}
-
-resource "aws_security_group_rule" "agent_serf_lan_tcp" {
-  count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
-
-  cidr_blocks       = ["${var.consul_gossip_cidrs}"]
-  from_port         = 8301
-  protocol          = "tcp"
-  security_group_id = "${var.cluster_sg_id}"
-  to_port           = 8301
-  type              = "ingress"
-}
-
-resource "aws_security_group_rule" "agent_serf_lan_udp" {
-  count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
-
-  cidr_blocks       = ["${var.consul_gossip_cidrs}"]
-  from_port         = 8301
-  protocol          = "udp"
-  security_group_id = "${var.cluster_sg_id}"
-  to_port           = 8301
-  type              = "ingress"
-}
-
-resource "aws_security_group_rule" "agent_serf_wan_tcp" {
-  count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
-
-  cidr_blocks       = ["${var.consul_gossip_cidrs}"]
-  from_port         = 8302
-  protocol          = "tcp"
-  security_group_id = "${var.cluster_sg_id}"
-  to_port           = 8302
-  type              = "ingress"
-}
-
-resource "aws_security_group_rule" "agent_serf_wan_udp" {
-  count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
-
-  cidr_blocks       = ["${var.consul_gossip_cidrs}"]
-  from_port         = 8302
-  protocol          = "udp"
-  security_group_id = "${var.cluster_sg_id}"
-  to_port           = 8302
-  type              = "ingress"
-}
-
-### Consul HTTP client security group
 resource "aws_security_group" "consul_sg" {
-  count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
+  count = "${local.service_discovery_check * local.consul_server_check}"
 
   description = "${var.stack_item_fullname} Consul security group"
   name_prefix = "consul-${var.stack_item_label}-"
   vpc_id      = "${var.vpc_id}"
-
-  egress {
-    cidr_blocks = ["0.0.0.0/0"]
-    from_port   = 0
-    protocol    = -1
-    to_port     = 0
-  }
-
-  ingress {
-    from_port = 8500
-    protocol  = "tcp"
-    self      = true
-    to_port   = 8500
-  }
 
   tags {
     application = "${var.stack_item_fullname}"
@@ -100,9 +34,76 @@ resource "aws_security_group" "consul_sg" {
   }
 }
 
+### Traffic within the environment
+resource "aws_security_group_rule" "agent_consul_rpc" {
+  count = "${local.service_discovery_check * local.consul_server_check}"
+
+  from_port         = 8300
+  protocol          = "tcp"
+  security_group_id = "${aws_security_group.consul_sg.id}"
+  self              = true
+  to_port           = 8300
+  type              = "ingress"
+}
+
+resource "aws_security_group_rule" "agent_serf_lan_tcp" {
+  count = "${local.service_discovery_check * local.consul_server_check}"
+
+  from_port         = 8301
+  protocol          = "tcp"
+  security_group_id = "${aws_security_group.consul_sg.id}"
+  self              = true
+  to_port           = 8301
+  type              = "ingress"
+}
+
+resource "aws_security_group_rule" "agent_serf_lan_udp" {
+  count = "${local.service_discovery_check * local.consul_server_check}"
+
+  from_port         = 8301
+  protocol          = "udp"
+  security_group_id = "${aws_security_group.consul_sg.id}"
+  self              = true
+  to_port           = 8301
+  type              = "ingress"
+}
+
+resource "aws_security_group_rule" "agent_serf_wan_tcp" {
+  count = "${local.service_discovery_check * local.consul_server_check}"
+
+  from_port         = 8302
+  protocol          = "tcp"
+  security_group_id = "${aws_security_group.consul_sg.id}"
+  self              = true
+  to_port           = 8302
+  type              = "ingress"
+}
+
+resource "aws_security_group_rule" "agent_serf_wan_udp" {
+  count = "${local.service_discovery_check * local.consul_server_check}"
+
+  from_port         = 8302
+  protocol          = "udp"
+  security_group_id = "${aws_security_group.consul_sg.id}"
+  self              = true
+  to_port           = 8302
+  type              = "ingress"
+}
+
+resource "aws_security_group_rule" "agent_http" {
+  count = "${local.service_discovery_check * local.consul_server_check}"
+
+  from_port         = 8500
+  protocol          = "tcp"
+  security_group_id = "${aws_security_group.consul_sg.id}"
+  self              = true
+  to_port           = 8500
+  type              = "ingress"
+}
+
 ## Creates ALB target group
 resource "aws_alb_target_group" "consul_group" {
-  count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
+  count = "${local.service_discovery_check * local.consul_server_check}"
 
   name     = "consul-${var.stack_item_label}"
   port     = 8500
@@ -126,9 +127,9 @@ resource "aws_alb_target_group" "consul_group" {
 
 ### Consul server
 data "template_file" "server_config" {
-  count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
+  count = "${local.service_discovery_check * local.consul_server_check}"
 
-  template = "${file("${path.module}/templates/server.tpl")}"
+  template = "${file("${path.module}/templates/server.hcl")}"
 
   vars {
     bootstrap_expect = "${var.server_desired_count}"
@@ -139,7 +140,7 @@ data "template_file" "server_config" {
 }
 
 resource "aws_ecs_task_definition" "server_task" {
-  count = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
+  count = "${local.service_discovery_check * local.consul_server_check}"
 
   container_definitions = "${coalesce(var.server_config_override,data.template_file.server_config.rendered)}"
   family                = "consul-server-${var.stack_item_label}"
@@ -159,9 +160,9 @@ resource "aws_ecs_task_definition" "server_task" {
 
 ### Consul agent
 data "template_file" "agent_config" {
-  count = "${var.service_discovery_enabled == "true" && var.agent_desired_count > 0 ? "1" : "0"}"
+  count = "${local.service_discovery_check * local.consul_agent_check}"
 
-  template = "${file("${path.module}/templates/agent.tpl")}"
+  template = "${file("${path.module}/templates/agent.hcl")}"
 
   vars {
     consul_dc    = "${var.consul_dc}"
@@ -171,7 +172,7 @@ data "template_file" "agent_config" {
 }
 
 resource "aws_ecs_task_definition" "agent_task" {
-  count = "${var.service_discovery_enabled == "true" && var.agent_desired_count > 0 ? "1" : "0"}"
+  count = "${local.service_discovery_check * local.consul_agent_check}"
 
   container_definitions = "${coalesce(var.agent_config_override,data.template_file.agent_config.rendered)}"
   family                = "consul-agent-${var.stack_item_label}"
@@ -191,9 +192,9 @@ resource "aws_ecs_task_definition" "agent_task" {
 
 ### Registrator
 data "template_file" "registrator_config" {
-  count = "${var.service_discovery_enabled == "true" && var.service_registration_enabled == "true" ? "1" : "0"}"
+  count = "${local.service_discovery_check * local.registrator_check}"
 
-  template = "${file("${path.module}/templates/registrator.tpl")}"
+  template = "${file("${path.module}/templates/registrator.hcl")}"
 
   vars {
     docker_image = "${var.registrator_docker_image}"
@@ -201,7 +202,7 @@ data "template_file" "registrator_config" {
 }
 
 resource "aws_ecs_task_definition" "registrator_task" {
-  count = "${var.service_discovery_enabled == "true" && var.service_registration_enabled == "true" ? "1" : "0"}"
+  count = "${local.service_discovery_check * local.registrator_check}"
 
   container_definitions = "${coalesce(var.registrator_config_override,data.template_file.registrator_config.rendered)}"
   family                = "registrator-${var.stack_item_label}"
@@ -217,7 +218,7 @@ resource "aws_ecs_task_definition" "registrator_task" {
 
 ### Consul server
 resource "aws_ecs_service" "consul_server" {
-  count      = "${var.service_discovery_enabled == "true" ? "1" : "0"}"
+  count      = "${local.service_discovery_check * local.consul_server_check}"
   depends_on = ["aws_iam_role.ecs_role"]
 
   cluster                            = "${var.cluster_id}"
@@ -241,7 +242,7 @@ resource "aws_ecs_service" "consul_server" {
 
 ### Consul agent
 resource "aws_ecs_service" "consul_agent" {
-  count = "${var.service_discovery_enabled == "true" && var.agent_desired_count > 0 ? "1" : "0"}"
+  count = "${local.service_discovery_check * local.consul_agent_check}"
 
   cluster                            = "${var.cluster_id}"
   deployment_maximum_percent         = "100"
@@ -257,7 +258,7 @@ resource "aws_ecs_service" "consul_agent" {
 
 ### Registrator
 resource "aws_ecs_service" "registrator" {
-  count = "${var.service_discovery_enabled == "true" && var.service_registration_enabled == "true" ? "1" : "0"}"
+  count = "${local.service_discovery_check * local.registrator_check}"
 
   cluster                            = "${var.cluster_id}"
   deployment_maximum_percent         = "100"

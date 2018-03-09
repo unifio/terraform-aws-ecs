@@ -4,6 +4,9 @@
   "memory": 16,
   "cpu": 10,
   "essential": true,
+  "dockerLabels": {
+    "service": "registrator"
+  },
   "mountPoints": [{
     "containerPath": "/tmp/docker.sock",
     "sourceVolume": "docker_socket",

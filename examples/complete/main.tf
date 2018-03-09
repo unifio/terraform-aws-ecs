@@ -6,14 +6,18 @@ provider "aws" {
 }
 
 ## Creates logs bucket
+resource "random_id" "bucket" {
+  byte_length = 8
+}
+
 resource "aws_s3_bucket" "logs" {
-  bucket = "unifio-ecs-exmpl-logs-bucket"
+  bucket = "unifio-ecs-exmpl-${random_id.bucket.hex}"
   acl    = "private"
 }
 
 ## Creates cloud-config
 data "template_file" "init" {
-  template = "${file("${path.module}/user_data.tpl")}"
+  template = "${file("${path.module}/user_data.hcl")}"
 
   vars {
     cluster_label    = "${var.cluster_label}"

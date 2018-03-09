@@ -20,9 +20,9 @@ resource "aws_iam_role" "agent_role" {
 }
 
 resource "aws_iam_instance_profile" "agent_profile" {
-  name  = "ecs-agent-${var.cluster_label}-${var.stack_item_label}-${data.aws_region.current.name}"
-  path  = "${var.iam_path}"
-  roles = ["${aws_iam_role.agent_role.name}"]
+  name = "ecs-agent-${var.cluster_label}-${var.stack_item_label}-${data.aws_region.current.name}"
+  path = "${var.iam_path}"
+  role = "${aws_iam_role.agent_role.name}"
 }
 
 ### Creates monitoring policy

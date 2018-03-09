@@ -1,9 +1,12 @@
 [{
   "name": "consul-server",
   "image": "${docker_image}",
-  "memory": 128,
-  "cpu": 64,
+  "memory": 256,
+  "cpu": 128,
   "essential": true,
+  "dockerLabels": {
+    "service": "consul"
+  },
   "portMappings": [{
     "hostPort": 8500,
     "containerPort": 8500,

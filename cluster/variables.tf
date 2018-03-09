@@ -310,12 +310,6 @@ variable "consul_docker_image" {
   default     = "consul:latest"
 }
 
-variable "consul_gossip_cidrs" {
-  type        = "list"
-  description = "CIDRs encompassing all nodes wihin the Consul datacenter."
-  default     = ["0.0.0.0/0"]
-}
-
 variable "registrator_config_override" {
   type        = "string"
   description = "Registrator ECS task configuration JSON."

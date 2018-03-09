@@ -3,6 +3,15 @@
 #### IMPROVEMENTS / NEW FEATURES:
 * Add support for application auto scaling
 
+## 0.3.2 (March 9, 2018)
+
+#### BACKWARDS INCOMPATIBILITIES / NOTES:
+* The `consul_gossip_cidrs` parameter has been removed.
+
+#### IMPROVEMENTS / NEW FEATURES:
+* Module now properly supports the service discovery use case of a Consul server count of 0.
+* Consul communications are now bound by security group and not CIDR
+
 ## 0.3.1 (June 29, 2017)
 
 #### BACKWARDS INCOMPATIBILITIES / NOTES:
