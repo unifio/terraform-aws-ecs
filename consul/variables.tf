@@ -55,10 +55,6 @@ variable "consul_docker_image" {
   type = "string"
 }
 
-variable "consul_gossip_cidrs" {
-  type = "list"
-}
-
 variable "registrator_config_override" {
   type = "string"
 }
