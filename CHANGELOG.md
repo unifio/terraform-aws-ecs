@@ -3,6 +3,14 @@
 #### IMPROVEMENTS / NEW FEATURES:
 * Add support for application auto scaling
 
+## 0.3.3 (March 10, 2019)
+
+#### BACKWARDS INCOMPATIBILITIES / NOTES:
+##### [terraform-provider-aws v2.0](https://github.com/terraform-providers/terraform-provider-aws/blob/master/CHANGELOG.md) Updates
+* The [terraform-provider-aws](https://github.com/terraform-providers/terraform-provider-aws/issues/7697) has deprecated the use of the `current` filter in regions. The `current` filter was removed for [issue#7](https://github.com/unifio/terraform-aws-ecs/issues/8).
+* The [terraform-provider-aws](https://github.com/terraform-providers/terraform-provider-aws/issues/5576) now requires an `owners` argument. This was added in place of the owner-alias for [issue#8](https://github.com/unifio/terraform-aws-ecs/issues/8)
+* Updated [terraform-aws-asg](https://github.com/unifio/terraform-aws-asg/releases/tag/v0.3.7) to v0.3.7
+
 ## 0.3.2 (March 9, 2018)
 
 #### BACKWARDS INCOMPATIBILITIES / NOTES:
