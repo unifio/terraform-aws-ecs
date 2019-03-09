@@ -5,9 +5,7 @@ terraform {
   required_version = "> 0.11.0"
 }
 
-data "aws_region" "current" {
-  current = true
-}
+data "aws_region" "current" {}
 
 ## Creates cloud-config data for agent cluster
 data "template_file" "user_data" {
@@ -22,6 +20,7 @@ data "template_file" "user_data" {
 ## Creates autoscaling cluster
 data "aws_ami" "ecs_ami" {
   most_recent = true
+  owners      = ["amazon"]
 
   filter {
     name   = "architecture"
@@ -31,11 +30,6 @@ data "aws_ami" "ecs_ami" {
   filter {
     name   = "name"
     values = ["amzn-ami-*-amazon-ecs-optimized"]
-  }
-
-  filter {
-    name   = "owner-alias"
-    values = ["amazon"]
   }
 
   filter {
@@ -50,7 +44,7 @@ data "aws_ami" "ecs_ami" {
 }
 
 module "cluster" {
-  source = "github.com/unifio/terraform-aws-asg?ref=v0.3.1//group"
+  source = "github.com/unifio/terraform-aws-asg?ref=v0.3.7//group"
 
   # Resource tags
   stack_item_fullname = "${var.stack_item_fullname}"
