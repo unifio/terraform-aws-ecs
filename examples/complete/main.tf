@@ -146,9 +146,9 @@ resource "aws_alb_listener_rule" "consul_rule" {
     type             = "forward"
     target_group_arn = module.cluster.consul_target_group_arn
   }
-
   condition {
-    field  = "path-pattern"
-    values = ["/*"]
+    path_pattern {
+      values = ["/*"]
+    }
   }
 }
