@@ -3,6 +3,14 @@
 #### IMPROVEMENTS / NEW FEATURES:
 * Add support for application auto scaling
 
+## 0.4.0 (May 28, 2020)
+
+#### IMPROVEMENTS / NEW FEATURES:
+* Updated for Terraform v0.12
+
+#### BACKWARDS INCOMPATIBILITIES / NOTES:
+* Terraform versions earlier than 0.12.0 no longer supported.
+
 ## 0.3.3 (March 10, 2019)
 
 #### BACKWARDS INCOMPATIBILITIES / NOTES:
