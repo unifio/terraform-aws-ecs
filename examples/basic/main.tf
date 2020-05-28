@@ -21,6 +21,6 @@ module "cluster" {
   instance_type               = var.instance_type
   max_size                    = var.max_size
   min_size                    = var.min_size
-  subnets                     = ["${var.subnets}"]
+  subnets                     = var.subnets
   vpc_id                      = var.vpc_id
 }

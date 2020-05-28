@@ -52,7 +52,7 @@ module "cluster" {
   stack_item_label    = "${var.cluster_label}-${var.stack_item_label}"
 
   # VPC parameters
-  subnets = [var.subnets]
+  subnets = var.subnets
   vpc_id  = var.vpc_id
 
   # LC parameters
@@ -78,7 +78,7 @@ module "cluster" {
   root_vol_iops                 = var.root_vol_iops
   root_vol_size                 = var.root_vol_size
   root_vol_type                 = var.root_vol_type
-  security_groups               = [distinct(concat([module.consul.sg_id], compact(var.security_groups)))]
+  security_groups               = distinct(concat([module.consul.sg_id], compact(var.security_groups)))
   spot_price                    = var.spot_price
   user_data = coalesce(
     var.user_data_override,
@@ -88,7 +88,7 @@ module "cluster" {
   # ASG parameters
   default_cooldown          = var.default_cooldown
   desired_capacity          = var.desired_capacity
-  enabled_metrics           = [var.enabled_metrics]
+  enabled_metrics           = var.enabled_metrics
   force_delete              = var.force_delete
   hc_check_type             = var.hc_check_type
   hc_grace_period           = var.hc_grace_period
@@ -96,9 +96,9 @@ module "cluster" {
   min_size                  = var.min_size
   placement_group           = var.placement_group
   protect_from_scale_in     = var.protect_from_scale_in
-  suspended_processes       = [var.suspended_processes]
-  target_group_arns         = [var.target_group_arns]
-  termination_policies      = [var.termination_policies]
+  suspended_processes       = var.suspended_processes
+  target_group_arns         = var.target_group_arns
+  termination_policies      = var.termination_policies
   wait_for_capacity_timeout = var.wait_for_capacity_timeout
 }
 

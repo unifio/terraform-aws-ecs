@@ -19,7 +19,7 @@ resource "aws_s3_bucket" "logs" {
 data "template_file" "init" {
   template = file("${path.module}/user_data.hcl")
 
-  vars {
+  vars = {
     cluster_label    = var.cluster_label
     stack_item_label = var.stack_item_label
   }
@@ -52,7 +52,7 @@ module "cluster" {
   logs_bucket_name    = aws_s3_bucket.logs.id
   max_size            = var.max_size
   min_size            = var.min_size
-  subnets             = ["${var.subnets}"]
+  subnets             = var.subnets
   user_data_override  = data.template_file.init.rendered
   vpc_id              = var.vpc_id
 
@@ -69,7 +69,7 @@ resource "aws_security_group" "lb" {
   description = "${var.stack_item_fullname} load balancer security group"
   vpc_id      = var.vpc_id
 
-  tags {
+  tags = {
     application = var.stack_item_fullname
     managed_by  = "terraform"
     Name        = "${var.stack_item_label}-lb"
@@ -97,10 +97,10 @@ resource "aws_security_group_rule" "lb_http" {
 
 resource "aws_alb" "lb" {
   name            = "${var.cluster_label}-${var.stack_item_label}"
-  security_groups = ["${aws_security_group.lb.id}", "${module.cluster.consul_sg_id}"]
-  subnets         = ["${var.subnets}"]
+  security_groups = [aws_security_group.lb.id, module.cluster.consul_sg_id]
+  subnets         = var.subnets
 
-  tags {
+  tags = {
     application = var.stack_item_fullname
     managed_by  = "terraform"
     Name        = var.stack_item_label
@@ -118,7 +118,7 @@ resource "aws_alb_target_group" "default" {
     protocol = "HTTP"
   }
 
-  tags {
+  tags = {
     application = var.stack_item_fullname
     Name        = "default-${var.stack_item_label}"
     managed_by  = "terraform"
