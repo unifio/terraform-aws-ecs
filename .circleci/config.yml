@@ -5,7 +5,7 @@ jobs:
     working_directory: ~/repo
 
     docker:
-      - image: unifio/ci:3.0.622-ruby-2.5.3
+      - image: unifio/ci:5.0.945-ruby-2.5.5
 
     environment:
       AWS_REGION: 'us-east-2'
