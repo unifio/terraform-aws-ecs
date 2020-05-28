@@ -1,13 +1,13 @@
 # Input variables
 
 variable "region" {
-  type = "string"
+  type = string
 }
 
 variable "stack_item_fullname" {
-  type = "string"
+  type = string
 }
 
 variable "stack_item_label" {
-  type = "string"
+  type = string
 }

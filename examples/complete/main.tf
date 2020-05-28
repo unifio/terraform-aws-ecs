@@ -2,7 +2,7 @@
 
 ## Configures AWS provider
 provider "aws" {
-  region = "${var.region}"
+  region = var.region
 }
 
 ## Creates logs bucket
@@ -17,11 +17,11 @@ resource "aws_s3_bucket" "logs" {
 
 ## Creates cloud-config
 data "template_file" "init" {
-  template = "${file("${path.module}/user_data.hcl")}"
+  template = file("${path.module}/user_data.hcl")
 
   vars {
-    cluster_label    = "${var.cluster_label}"
-    stack_item_label = "${var.stack_item_label}"
+    cluster_label    = var.cluster_label
+    stack_item_label = var.stack_item_label
   }
 }
 
@@ -32,33 +32,33 @@ module "cluster" {
   source = "../../cluster"
 
   # Resource tags
-  cluster_label       = "${var.cluster_label}"
-  stack_item_fullname = "${var.stack_item_fullname}"
-  stack_item_label    = "${var.stack_item_label}"
+  cluster_label       = var.cluster_label
+  stack_item_fullname = var.stack_item_fullname
+  stack_item_label    = var.stack_item_label
 
   # Cluster parameters
   associate_public_ip_address   = "true"
-  ami_override                  = "${var.ami_override}"
-  enable_monitoring             = "${var.enable_monitoring}"
-  iam_path                      = "${var.iam_path}"
-  instance_based_naming_enabled = "${var.instance_based_naming_enabled}"
+  ami_override                  = var.ami_override
+  enable_monitoring             = var.enable_monitoring
+  iam_path                      = var.iam_path
+  instance_based_naming_enabled = var.instance_based_naming_enabled
 
   instance_tags = {
     "env" = "example"
   }
 
-  instance_type       = "${var.instance_type}"
+  instance_type       = var.instance_type
   logs_bucket_enabled = "true"
-  logs_bucket_name    = "${aws_s3_bucket.logs.id}"
-  max_size            = "${var.max_size}"
-  min_size            = "${var.min_size}"
+  logs_bucket_name    = aws_s3_bucket.logs.id
+  max_size            = var.max_size
+  min_size            = var.min_size
   subnets             = ["${var.subnets}"]
-  user_data_override  = "${data.template_file.init.rendered}"
-  vpc_id              = "${var.vpc_id}"
+  user_data_override  = data.template_file.init.rendered
+  vpc_id              = var.vpc_id
 
   # Service discovery parameters
-  service_discovery_enabled    = "${var.service_discovery_enabled}"
-  service_registration_enabled = "${var.service_registration_enabled}"
+  service_discovery_enabled    = var.service_discovery_enabled
+  service_registration_enabled = var.service_registration_enabled
 }
 
 # Configures ALB for internal dashboards
@@ -67,10 +67,10 @@ module "cluster" {
 resource "aws_security_group" "lb" {
   name_prefix = "${var.stack_item_label}-lb-"
   description = "${var.stack_item_fullname} load balancer security group"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = var.vpc_id
 
   tags {
-    application = "${var.stack_item_fullname}"
+    application = var.stack_item_fullname
     managed_by  = "terraform"
     Name        = "${var.stack_item_label}-lb"
   }
@@ -81,7 +81,7 @@ resource "aws_security_group_rule" "lb_egress" {
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 0
   protocol          = -1
-  security_group_id = "${aws_security_group.lb.id}"
+  security_group_id = aws_security_group.lb.id
   to_port           = 0
   type              = "egress"
 }
@@ -90,7 +90,7 @@ resource "aws_security_group_rule" "lb_http" {
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 80
   protocol          = "tcp"
-  security_group_id = "${aws_security_group.lb.id}"
+  security_group_id = aws_security_group.lb.id
   to_port           = 80
   type              = "ingress"
 }
@@ -101,9 +101,9 @@ resource "aws_alb" "lb" {
   subnets         = ["${var.subnets}"]
 
   tags {
-    application = "${var.stack_item_fullname}"
+    application = var.stack_item_fullname
     managed_by  = "terraform"
-    Name        = "${var.stack_item_label}"
+    Name        = var.stack_item_label
   }
 }
 
@@ -111,7 +111,7 @@ resource "aws_alb_target_group" "default" {
   name     = "default-${var.stack_item_label}"
   port     = 80
   protocol = "HTTP"
-  vpc_id   = "${var.vpc_id}"
+  vpc_id   = var.vpc_id
 
   health_check {
     port     = 80
@@ -119,32 +119,32 @@ resource "aws_alb_target_group" "default" {
   }
 
   tags {
-    application = "${var.stack_item_fullname}"
+    application = var.stack_item_fullname
     Name        = "default-${var.stack_item_label}"
     managed_by  = "terraform"
   }
 }
 
 resource "aws_alb_listener" "admin" {
-  load_balancer_arn = "${aws_alb.lb.arn}"
+  load_balancer_arn = aws_alb.lb.arn
   port              = 80
   protocol          = "HTTP"
 
   default_action {
-    target_group_arn = "${aws_alb_target_group.default.arn}"
+    target_group_arn = aws_alb_target_group.default.arn
     type             = "forward"
   }
 }
 
 resource "aws_alb_listener_rule" "consul_rule" {
-  count = "${var.service_discovery_enabled == "true" ? 1 : 0}"
+  count = var.service_discovery_enabled == "true" ? 1 : 0
 
-  listener_arn = "${aws_alb_listener.admin.arn}"
+  listener_arn = aws_alb_listener.admin.arn
   priority     = 100
 
   action {
     type             = "forward"
-    target_group_arn = "${module.cluster.consul_target_group_arn}"
+    target_group_arn = module.cluster.consul_target_group_arn
   }
 
   condition {

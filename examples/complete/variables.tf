@@ -2,65 +2,65 @@
 
 ## Resource tags
 variable "cluster_label" {
-  type = "string"
+  type = string
 }
 
 variable "stack_item_fullname" {
-  type = "string"
+  type = string
 }
 
 variable "stack_item_label" {
-  type = "string"
+  type = string
 }
 
 ## Cluster parameters
 variable "ami_override" {
-  type = "string"
+  type = string
 }
 
 variable "enable_monitoring" {
-  type = "string"
+  type = string
 }
 
 variable "iam_path" {
-  type = "string"
+  type = string
 }
 
 variable "instance_based_naming_enabled" {
-  type = "string"
+  type = string
 }
 
 variable "instance_type" {
-  type = "string"
+  type = string
 }
 
 variable "max_size" {
-  type = "string"
+  type = string
 }
 
 variable "min_size" {
-  type = "string"
+  type = string
 }
 
 variable "region" {
-  type = "string"
+  type = string
 }
 
 variable "subnets" {
-  type = "list"
+  type = list(string)
 }
 
 variable "vpc_id" {
-  type = "string"
+  type = string
 }
 
 ## Service discovery parameters
 variable "service_discovery_enabled" {
-  type    = "string"
+  type    = string
   default = "false"
 }
 
 variable "service_registration_enabled" {
-  type    = "string"
+  type    = string
   default = "false"
 }

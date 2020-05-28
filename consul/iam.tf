@@ -2,7 +2,7 @@
 
 ## Creates IAM role for Consul ECS services
 data "aws_iam_policy_document" "consul_policy" {
-  count = "${local.service_discovery_check}"
+  count = local.service_discovery_check
 
   statement {
     actions = ["sts:AssumeRole"]
@@ -16,15 +16,15 @@ data "aws_iam_policy_document" "consul_policy" {
 }
 
 resource "aws_iam_role" "consul_role" {
-  count = "${local.service_discovery_check}"
+  count = local.service_discovery_check
 
-  assume_role_policy = "${data.aws_iam_policy_document.consul_policy.json}"
+  assume_role_policy = data.aws_iam_policy_document.consul_policy[0].json
   name               = "consul-${var.stack_item_label}-${data.aws_region.current.name}"
-  path               = "${var.iam_path}"
+  path               = var.iam_path
 }
 
 data "aws_iam_policy_document" "consul_ec2_policy" {
-  count = "${local.service_discovery_check}"
+  count = local.service_discovery_check
 
   statement {
     actions = [
@@ -37,16 +37,16 @@ data "aws_iam_policy_document" "consul_ec2_policy" {
 }
 
 resource "aws_iam_role_policy" "consul_ec2_policy" {
-  count = "${local.service_discovery_check}"
+  count = local.service_discovery_check
 
   name   = "ec2"
-  policy = "${data.aws_iam_policy_document.consul_ec2_policy.json}"
-  role   = "${aws_iam_role.consul_role.id}"
+  policy = data.aws_iam_policy_document.consul_ec2_policy[0].json
+  role   = aws_iam_role.consul_role[0].id
 }
 
 ## Creates IAM role for the ECS service
 data "aws_iam_policy_document" "ecs_policy" {
-  count = "${local.service_discovery_check * local.consul_server_check}"
+  count = local.service_discovery_check * local.consul_server_check
 
   statement {
     actions = ["sts:AssumeRole"]
@@ -60,11 +60,11 @@ data "aws_iam_policy_document" "ecs_policy" {
 }
 
 resource "aws_iam_role" "ecs_role" {
-  count = "${local.service_discovery_check * local.consul_server_check}"
+  count = local.service_discovery_check * local.consul_server_check
 
-  assume_role_policy = "${data.aws_iam_policy_document.ecs_policy.json}"
+  assume_role_policy = data.aws_iam_policy_document.ecs_policy[0].json
   name               = "ecs-consul-${var.stack_item_label}-${data.aws_region.current.name}"
-  path               = "${var.iam_path}"
+  path               = var.iam_path
 }
 
 data "aws_iam_policy_document" "lb_policy" {
@@ -85,11 +85,11 @@ data "aws_iam_policy_document" "lb_policy" {
 }
 
 resource "aws_iam_role_policy" "lb_policy" {
-  count = "${local.service_discovery_check * local.consul_server_check}"
+  count = local.service_discovery_check * local.consul_server_check
 
   name   = "lb"
-  policy = "${data.aws_iam_policy_document.lb_policy.json}"
-  role   = "${aws_iam_role.ecs_role.id}"
+  policy = data.aws_iam_policy_document.lb_policy.json
+  role   = aws_iam_role.ecs_role[0].id
 }
 
 data "aws_iam_policy_document" "ecs_ec2_policy" {
@@ -105,9 +105,10 @@ data "aws_iam_policy_document" "ecs_ec2_policy" {
 }
 
 resource "aws_iam_role_policy" "ecs_ec2_policy" {
-  count = "${local.service_discovery_check * local.consul_server_check}"
+  count = local.service_discovery_check * local.consul_server_check
 
   name   = "ec2"
-  policy = "${data.aws_iam_policy_document.ecs_ec2_policy.json}"
-  role   = "${aws_iam_role.ecs_role.id}"
+  policy = data.aws_iam_policy_document.ecs_ec2_policy.json
+  role   = aws_iam_role.ecs_role[0].id
 }
+
