@@ -17,7 +17,7 @@ examples::basic::vars:
   instance_type: 't2.nano'
   max_size: '3'
   min_size: '2'
-  region: 'us-east-2'
+  region: 'us-east-1'
   stack_item_fullname: 'Basic Examples'
   stack_item_label: 'bsc'
   subnets:

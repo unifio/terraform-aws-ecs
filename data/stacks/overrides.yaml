@@ -13,7 +13,8 @@ overrides::state:
 
 ## Input variables
 examples::complete::vars:
-  ami_override: 'ami-abf2a9ce' # amzn-ami-2016.03.j-amazon-ecs-optimized
+  # https://us-east-1.console.aws.amazon.com/systems-manager/parameters/aws/service/ecs/optimized-ami/amazon-linux/recommended/image_id/description?region=us-east-1
+  ami_override: 'ami-040d7258a1baecb27'
   cluster_label: 'exmpl'
   enable_monitoring: 'true'
   iam_path: '/terraform/'
@@ -21,7 +22,7 @@ examples::complete::vars:
   instance_type: 't2.small'
   max_size: '3'
   min_size: '2'
-  region: 'us-east-2'
+  region: 'us-east-1'
   stack_item_fullname: 'Complete Examples'
   stack_item_label: 'cmpl'
   subnets:
