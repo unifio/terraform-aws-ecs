@@ -5,7 +5,7 @@ Terraform module for the deployment of an AWS Elastic Container Service (ECS) cl
 
 ## Requirements ##
 
-- Terraform 0.11.0 or newer
+- Terraform 0.12.0 or newer
 - AWS provider
 
 ## Cluster module ##
