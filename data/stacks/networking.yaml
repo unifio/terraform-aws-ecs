@@ -13,6 +13,6 @@ networking::state:
 
 ## Input variables
 examples::prereqs::vars:
-  region: 'us-east-2'
+  region: 'us-east-1'
   stack_item_fullname: 'ECS Examples'
   stack_item_label: 'ecs-exmpl'

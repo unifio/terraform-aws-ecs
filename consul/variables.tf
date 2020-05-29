@@ -2,91 +2,92 @@
 
 ## Resource tags
 variable "stack_item_fullname" {
-  type = "string"
+  type = string
 }
 
 variable "stack_item_label" {
-  type = "string"
+  type = string
 }
 
 ## ECS parameters
 variable "cluster_id" {
-  type        = "string"
+  type        = string
   description = "ECS cluster ID."
 }
 
 variable "cluster_name" {
-  type        = "string"
+  type        = string
   description = "ECS cluster name."
 }
 
 variable "cluster_sg_id" {
-  type        = "string"
+  type        = string
   description = "ECS cluster security group ID."
 }
 
 variable "iam_path" {
-  type = "string"
+  type = string
 }
 
 variable "vpc_id" {
-  type        = "string"
+  type        = string
   description = "ID of the target VPC."
 }
 
 ## Service discovery parameters
 variable "agent_config_override" {
-  type = "string"
+  type = string
 }
 
 variable "agent_desired_count" {
-  type = "string"
+  type = string
 }
 
 variable "agent_task_arn_override" {
-  type = "string"
+  type = string
 }
 
 variable "consul_dc" {
-  type = "string"
+  type = string
 }
 
 variable "consul_docker_image" {
-  type = "string"
+  type = string
 }
 
 variable "registrator_config_override" {
-  type = "string"
+  type = string
 }
 
 variable "registrator_desired_count" {
-  type = "string"
+  type = string
 }
 
 variable "registrator_docker_image" {
-  type = "string"
+  type = string
 }
 
 variable "registrator_task_arn_override" {
-  type = "string"
+  type = string
 }
 
 variable "server_config_override" {
-  type = "string"
+  type = string
 }
 
 variable "server_desired_count" {
-  type = "string"
+  type = string
 }
 
 variable "server_task_arn_override" {
-  type = "string"
+  type = string
 }
 
 variable "service_discovery_enabled" {
-  type = "string"
+  type = string
 }
 
 variable "service_registration_enabled" {
-  type = "string"
+  type = string
 }
+

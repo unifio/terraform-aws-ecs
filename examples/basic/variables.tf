@@ -2,38 +2,38 @@
 
 ## Resource tags
 variable "cluster_label" {
-  type = "string"
+  type = string
 }
 
 variable "stack_item_fullname" {
-  type = "string"
+  type = string
 }
 
 variable "stack_item_label" {
-  type = "string"
+  type = string
 }
 
 ## Cluster parameters
 variable "instance_type" {
-  type = "string"
+  type = string
 }
 
 variable "max_size" {
-  type = "string"
+  type = string
 }
 
 variable "min_size" {
-  type = "string"
+  type = string
 }
 
 variable "region" {
-  type = "string"
+  type = string
 }
 
 variable "subnets" {
-  type = "list"
+  type = list(string)
 }
 
 variable "vpc_id" {
-  type = "string"
+  type = string
 }
